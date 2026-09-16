@@ -93,13 +93,13 @@ plum-lilac 的亮纸版。论文汇报、技术评审、研究综述。
 不绑定任何单一 Agent。适用于 Claude Code、Codex、WorkBuddy 等支持 skill / 自定义指令的 Agent，把仓库 clone 进你的 Agent 读取 skill 的目录即可。
 
 ```bash
-git clone https://github.com/<your-org>/rico-nice-ppt.git <你的-skills-目录>/rico-nice-ppt
+git clone https://github.com/ricoocuii-source/rico-nice-ppt.git <你的-skills-目录>/rico-nice-ppt
 ```
 
 Claude Code 为例：
 
 ```bash
-git clone https://github.com/<your-org>/rico-nice-ppt.git ~/.claude/skills/rico-nice-ppt
+git clone https://github.com/ricoocuii-source/rico-nice-ppt.git ~/.claude/skills/rico-nice-ppt
 ```
 
 其他 Agent 换成各自的 skill / prompt 目录即可，SKILL.md 本身就是规范正文，不依赖任何宿主特性。
