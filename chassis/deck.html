@@ -857,6 +857,101 @@
         color: var(--c-accent-text);
       }
 
+      /* ── ICON · Lucide 图标层 ──────────────────────────────────────────────
+         markup 只写 i.ico.ico--item 加 data-icon="名字"（空元素），
+         build_deck.py 从 assets/icons/lucide.json 内联 svg，产出仍是单文件。
+         两个槽位：ico--mark 大图标（cover / chapter / end 右侧），
+         ico--item 小图标（并列条目前）。颜色一律继承所在文字，不单独取色。 */
+      .ico {
+        display: inline-flex;
+        width: 1em;
+        height: 1em;
+        flex: none;
+        vertical-align: -0.14em;
+        color: inherit;
+      }
+      .ico svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .ico--item {
+        font-size: 1.2vw;
+      }
+      .ico--item svg {
+        stroke-width: 1.75;
+      }
+      /* 大图标：标题同色（fg），20vw，线宽 0.6 放大后仍是细线。
+         chapter / end 文字块页面居中，印记也居中，天然同一水平线。 */
+      .ico--mark {
+        position: absolute;
+        right: var(--pad-x);
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 20vw;
+        color: var(--c-fg);
+        pointer-events: none;
+      }
+      .ico--mark svg {
+        stroke-width: 0.6;
+      }
+      /* 封面内容沉底：印记进 cover-body 右列，与 label + 标题 + 导语块垂直居中 */
+      .cover-body:has(> .ico--mark) {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-content: end;
+        row-gap: var(--gap-md);
+        column-gap: var(--gap-lg);
+      }
+      .cover-body:has(> .ico--mark) > * {
+        grid-column: 1;
+      }
+      .cover-body:has(> .ico--mark) > .cover-meta {
+        grid-column: 1 / -1;
+      }
+      /* 导语的 max-width: 52% 是按整行写的，进了左列会双重收窄出孤字；
+         这里按字数定宽（约 31 个汉字一行），inline 百分比不再生效。 */
+      .cover-body:has(> .ico--mark) > .lead {
+        max-width: min(100%, 31em) !important;
+      }
+      .cover-body > .ico--mark {
+        position: static;
+        transform: none;
+        grid-column: 2;
+        grid-row: 1 / 4;
+        align-self: center;
+      }
+      /* 小图标落点：bullet 替代破折号 / quadrant 替代序号 / triptych 帧顶小注 / compare 栏头 */
+      .bullet-list.has-ico li::before {
+        content: none;
+      }
+      .bullet-list.has-ico li {
+        grid-template-columns: 1.4em 1fr;
+        align-items: start;
+      }
+      .bullet-list.has-ico .ico--item {
+        font-size: 1em;
+        margin-top: 0.2em;
+      }
+      .quad-num .ico--item {
+        font-size: 1.6vw;
+        color: var(--c-fg);
+      }
+      .trip-frame-note,
+      .compare-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+      }
+      .trip-frame-note .ico--item,
+      .compare-label .ico--item {
+        font-size: 1.25em;
+      }
+
       /* ── CHART ─────────────────────────────────────────────────────────── */
       .slide--chart .slide-body {
         display: flex;
@@ -2012,6 +2107,8 @@
     <div id="deck">
       <section class="slide dark slide--cover">
         <div class="cover-body">
+          <!-- 大图标：封面右列，与标题块垂直居中，build 时内联 svg -->
+          <i class="ico ico--mark" data-icon="layers" data-anim="fade-in" data-delay="1"></i>
           <!-- 场次标记：左上角 mono 小标 -->
           <div class="label muted" data-anim="fade-in" data-delay="0">
             2026 · 排版体系 · 样张
@@ -2117,18 +2214,19 @@
           </div>
 
           <!-- 右栏：要点 -->
-          <ul class="bullet-list" data-anim="fade-up" data-delay="2">
+          <!-- 小图标替代破折号：has-ico + 每条一个 data-icon，颜色继承正文 -->
+          <ul class="bullet-list has-ico" data-anim="fade-up" data-delay="2">
             <li>
-              颜色只声明 bg、fg、accent 三个源色，其余槽位自动解出
+              <i class="ico ico--item" data-icon="palette"></i>颜色只声明 bg、fg、accent 三个源色，其余槽位自动解出
             </li>
             <li>
-              所有分割线只用同一个发丝线变量，浅纸深纸都不消失
+              <i class="ico ico--item" data-icon="minus"></i>所有分割线只用同一个发丝线变量，浅纸深纸都不消失
             </li>
             <li>
-              标题折行末行至少三个汉字，不许出现孤字
+              <i class="ico ico--item" data-icon="type"></i>标题折行末行至少三个汉字，不许出现孤字
             </li>
-            <li>无图不留空框，缺内容就补材料或换配方</li>
-            <li>页码由引擎写进页眉右上角，手写一律禁止</li>
+            <li><i class="ico ico--item" data-icon="image-off"></i>无图不留空框，缺内容就补材料或换配方</li>
+            <li><i class="ico ico--item" data-icon="hash"></i>页码由引擎写进页眉右上角，手写一律禁止</li>
           </ul>
         </div>
       </section>

@@ -111,6 +111,34 @@ python3 scripts/check_contrast.py
 | `slide--triptych` | 三联并置 | 帧沉底与叙事板共用底基线；发丝线在 `.trip-frame-num` 顶上；**每帧顶部必写一行 `.trip-frame-note`**（案例编号 · 主体 · 年份），左叙事板顶部也配一条（案例集 · 来源），咬掉天头留白 |
 | `slide--dumbbell` | 两点一线区间变化 | svg 高按行数算（每行 140）；空心点=前值、实心点=今值 |
 
+## 图标层（Lucide，12 套通用）
+
+图标是标点，不是插图。底盘自带离线 Lucide 索引（`assets/icons/lucide.json`，1711 个，含官方 tags），markup 只写空元素，`build_deck.py` 构建时内联 svg，产出仍是单文件。
+
+```html
+<i class="ico ico--mark" data-icon="globe" data-anim="fade-in" data-delay="1"></i>   <!-- 大图标 -->
+<i class="ico ico--item" data-icon="store"></i>                                    <!-- 小图标 -->
+```
+
+**两个槽位，颜色一律继承所在文字，不单独取色，不写 hex：**
+
+| 槽位 | 放哪 | 尺寸 / 线宽 | 颜色 |
+|---|---|---|---|
+| `ico--mark` 大图标 | cover / chapter / end 右侧，每页最多一个 | 20vw / 0.6 | 标题同色（fg），不是水印 |
+| `ico--item` 小图标 | 并列条目前：`bullet-list.has-ico` 每条、`quad-num` 内替代序号、`trip-frame-note` 行首、`compare-label` 行首 | 1.2vw（bullet 跟字号，栏头 / 小注 1.25em）/ 1.75 | 继承正文 / 副标题 / 小注的颜色 |
+
+落点写法：cover 的大图标放进 `.cover-body` 第一个子元素（自动进右列，与「小标 + 标题 + 导语」块垂直居中）；chapter / end 放 section 直接子元素（页面居中，与文字块同一水平线）。bullet 用 `<ul class="bullet-list has-ico">`，每条 `<li><i class="ico ico--item" data-icon="…"></i>文字</li>`，破折号自动去掉。quadrant 是 `<span class="quad-num"><i class="ico ico--item" data-icon="…"></i></span>`，四格不是顺序，图标替代 01–04。
+
+**克制规则（硬约束）：**
+
+1. 一页只用一种槽位：要么一个大图标，要么一组小图标，不混用。
+2. statement / quote / stats / versus 不放：标题或大数字已经是视觉重心。
+3. 小图标只放「同级并列项」（对照两栏、四象限、三联、清单条目），单独一个副标题、页眉 kicker、chart-header 不放。
+4. 语义匹配不到就不放，不硬凑「差不多」的。整本 deck 允许有一半以上的页没有图标。
+5. 同一组并列项要么全有要么全无，不许 5 条里 3 条有图标。
+
+**选图流程：** 先从条目文字提炼一个英文概念词（供应链 → supply chain / container，合规 → scale / file-check，人才 → users），跑 `python3 scripts/find_icon.py <词>`，名字命中优先、tags 其次；同组图标视觉重量要接近（都是线框物件，别一个 `globe` 配一个 `a-arrow-down`）。role 默认候选：cover 取主题物件（茶饮 `cup-soda`、零售 `store`、金融 `coins`）、chapter 取本章主题（市场 `globe`、路线 `route`、风险 `shield-alert`）、end 取方向类（`compass` / `flag` / `milestone`）。
+
 ## 工作流
 
 0. **首次触发必须先做智能推荐**：用户第一次用本 skill 并给出文章/材料时，不要直接开工，也不要把 12 套全摊开。先读完内容，判断它的类型和主题（行业报告 / 产品发布 / 数据复盘 / 深度长文 / 品牌叙事……），然后推荐 2-3 套视觉模板，**每套都给出具体理由**（为什么这个纸色、气质和字体配这篇内容），让用户从中选。用户点名了某套就跳过这步。示例口吻：「这是一篇偏财经的季度复盘，推荐：① 钴蓝暗纸——数字密集时深底金字最稳；② 报纸头版——社论气质配深读结论；③ 奶油墨亮纸——要打印分发就选它。选哪套？」
@@ -121,10 +149,14 @@ python3 scripts/check_contrast.py
    - **同级大字要区分身份**：关键读数（`.fig-num` 类）不能和 h2 同字号同色摆在一起，会被读成标题第二行；spotlight 里已降到 h2 的 0.8 倍，新页照此办理。
    - **页眉统一（无页脚体系）**：除封面外每页都带页眉：左侧写本页 kicker（`<span class="label muted">分类 · 主题</span>`），右侧页码由翻页引擎自动注入（`NN / 总数`），**手写页码一律禁止**。页脚已废弃（CSS 全局隐藏），空间归内容区。
    - **标题距页眉横线固定**：页眉横线到标题的距离全 deck 统一为 chrome 的 `margin-bottom`（gap-md）。split / spotlight 的栏是顶对齐（不许 justify-content:center 让标题下坠）。**顶对齐版式有密度底线**：列内容至少填到版心高度的 3/4，不够就补真实材料（多一条 bullet、一段旁注、一行档案），补不出来就换配方，不许留半页空白。
+   - **图标按「图标层」一节判断**：切完页再过一遍，只给并列项和三种叙事页配图标，配不上就空着；名字用 `scripts/find_icon.py` 查，不凭记忆写。
    - **金色短横线已从体系移除**：任何页都不画 `.rule` / `.chapter-rule` 这类装饰短线；kicker 一律放页眉左侧，标题上方不加装饰元素。
 3. 生成：
 
 ```bash
+# 真实出稿：手写 slides_content.html（可带开头 <style> 块），一步注入 + 内联图标
+python3 scripts/build_deck.py --pair <id> --mode dark|light --content <dest>/slides_content.html --title "<标题>" --out <dest>/index.html
+# 只出样张：
 python3 scripts/build_deck.py --pair <id> --mode dark|light --out <dest>/index.html
 # 特殊两套：
 python3 scripts/build_deck.py --pair newspaper-front --out <dest>/index.html
@@ -145,8 +177,14 @@ deck 目录自带依赖，file:// 双击打开、断网、整个目录挪走都�
    不能打出 `! <slug>: placeholder copy still visible`；源码里没有 `报告页`、`Image
    Placeholder`、`id="slide-counter"`、`slide-counter`、`#gl-bg`、`startDeckBG`、
    `webgl-bg.js`、`[Period]` 这类方括号占位；标题折行无孤字；markup 里没有手写页码和 `slide-foot`（页码由引擎注入页眉右上角）。
+   图标：产出里不能残留空的 `data-icon` 元素（`<i … data-icon="x"></i>` 没被内联说明没走 build_deck），未知图标名 build 会直接报错。
    翻页：`<dest>/assets/vendor/gsap.min.js` 存在，浏览器里 `<html>` 带 `gsap-enabled`，
    控制台 0 错误，翻页后无残留半透明元素。对照 `references/checklist.md`。
+6. **交付后引导（固定一句，不展开）**：交付话术末尾加「要精修可以推到 Figma 变成可编辑图层，我带你配置」。
+   用户点头才读 `references/figma-handoff.md`，按里面的 5 步首次配置引导（席位 → 装插件 →
+   `/mcp` 授权 → `whoami` → 要带 node-id 的目标链接）一步一步来，配过的直接要目标链接。
+   推送零依赖：`scripts/figma_extract.js` 在浏览器里量几何，`scripts/figma_build.js` 做 `use_figma` 模板。
+   推之前门禁必须全过，推完 HTML 不再更新。用户没回应就不追问。
 
 ## 翻页动效（GSAP）
 
@@ -200,4 +238,5 @@ transition 和 keyframes。vendor 丢了、被拦了，键盘 / 滚轮 / 触摸 
 - 不要 WebGL 背景，纸面用实色 `--c-bg`
 - **动效不加花：** 不旋转、不弹跳、不 3D 翻牌、不 blur、不随机、位移不超过 20px；不引 GSAP 插件，不改成 CDN；不给单页写独立特效
 - **禁孤字换行：** 标题、导语、金句折行后，最后一行不得只有 1 个汉字，也不得是「1 个汉字 + 标点」。至少 3 个汉字，英文至少 3 个单词。词不能从中间拆开（如「公斤」拆成「公 / 斤」）。放不下就改写或加 `<br>`，不要靠缩小字号。
+- **图标不加花：** 只有 `ico--mark` / `ico--item` 两个槽位，颜色继承文字、不写 hex、不上 accent 填充、不描边加底；一页一种槽位，不给 statement / quote / stats 配图标；不引第二套图标库，不用 emoji 顶替。
 - **无图不留空框：** 原文没有图，就不要 Image Placeholder、「报告页」、假手机、假聊天。把 split 改成双栏文字或单栏，用真实内容填满。

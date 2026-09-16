@@ -6,7 +6,8 @@
 - **12 套视觉模板，一套一种纸色。** 每套配色 DNA 只声明 `bg` / `fg` / `accent` 三个源色，其余 9 个槽位（次级正文、mono chrome、色块、发丝线、金字塔色带…）由 `tokens.py` 按对比度目标自动解出，不手填 hex。
 - **对比度是门禁，不是建议。** 正文文字对纸色 7.0 起步，次级 4.9，发丝线 2.1，12 套一起跑 `check_contrast.py`，不过不出稿。
 - **内容 → 版式有映射表。** 16 个内容语义 role（metrics / trend / ranking / shift / comparison / distribution / process / case…）各有首选和备选配方，选页查表不凭感觉；另有 11 种数据构图（横向条形、折线趋势、斜率图、哑铃图、四象限、评分卡、对决数字、三联并置…），排名、区间变化、离散评分各有专门的画法。
-- **离线单文件。** 字体 woff2 和翻页引擎本地打包进 deck 目录，不连 CDN、不连 Google Fonts。GSAP 丢了也能翻页，只是没有动效。
+- **图标是标点，不是插图。** 内置离线 Lucide 索引（1711 个图标 + 语义标签），只有两个槽位：封面 / 章节 / 收尾右侧一个大图标，并列条目前一组小图标。颜色一律继承所在文字，一页只用一种槽位，判断页、金句页、大数字页不放，匹配不到就不放。
+- **离线单文件。** 字体、翻页引擎和图标全部本地打包进 deck，不连 CDN、不连 Google Fonts。GSAP 丢了也能翻页，只是没有动效。
 
 ---
 
@@ -104,7 +105,7 @@ git clone https://github.com/ricoocuii-source/rico-nice-ppt.git ~/.claude/skills
 
 其他 Agent 换成各自的 skill / prompt 目录即可，SKILL.md 本身就是规范正文，不依赖任何宿主特性。
 
-依赖：Python 3（只用标准库）。字体和 GSAP 已随仓库打包，无需额外下载。
+依赖：Python 3（只用标准库）。字体、GSAP 和 Lucide 图标索引已随仓库打包，无需额外下载。
 
 ---
 
@@ -126,7 +127,10 @@ git clone https://github.com/ricoocuii-source/rico-nice-ppt.git ~/.claude/skills
 ### 构建
 
 ```bash
-# 色对 + 暗/亮
+# 真实出稿：手写 slides_content.html，一步注入 + 内联图标
+python3 scripts/build_deck.py --pair ink --mode dark --content <dest>/slides_content.html --title "标题" --out <dest>/index.html
+
+# 只出样张：色对 + 暗/亮
 python3 scripts/build_deck.py --pair ink --mode dark --out <dest>/index.html
 
 # 直接点 slug
@@ -137,6 +141,8 @@ python3 scripts/build_deck.py --all
 ```
 
 `--out` 会把字体和 GSAP 复制进 `<dest>/assets/`，重复运行幂等。`--pair` 的 id 列表用 `--list` 打印。
+
+图标：markup 里写 `<i class="ico ico--item" data-icon="store"></i>`，构建时内联成 svg；找名字用 `python3 scripts/find_icon.py risk "supply chain"`。
 
 ### 门禁
 
@@ -156,12 +162,14 @@ rico-nice-ppt/
 ├─ chassis/deck.html     # 锁死的底盘：字号 token、28 个页配方、翻页引擎
 ├─ dnas/<slug>.json      # 12 套配色 DNA，每套只声明 3 个源色
 ├─ scripts/
-│  ├─ build_deck.py      # 构建，--pair / --dna / --all / --list
+│  ├─ build_deck.py      # 构建，--pair / --dna / --content / --all / --list，内联图标
+│  ├─ find_icon.py       # 按英文关键词查 Lucide 图标名
 │  ├─ tokens.py          # 按对比度目标解出其余 9 个色槽
 │  ├─ check_contrast.py  # 门禁
 │  └─ content_fills.py
 ├─ assets/
 │  ├─ fonts/*.woff2      # 本地字体
+│  ├─ icons/lucide.json  # Lucide 1711 个图标的 path + 官方 tags（ISC，见同目录 LICENSE）
 │  └─ vendor/gsap.min.js # GSAP 3.15.0，不走 CDN
 └─ references/checklist.md
 ```
@@ -195,4 +203,4 @@ rico-nice-ppt/
 
 致谢：感谢所有给版式挑过毛病的人。
 
-License: 见 LICENSE
+License: 见 LICENSE。字体许可见 `fonts-licenses/`，图标（Lucide，ISC）许可见 `assets/icons/LICENSE`。

@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CHASSIS = ROOT / "chassis" / "deck.html"
 DNAS = ROOT / "dnas"
+ICON_INDEX = ROOT / "assets" / "icons" / "lucide.json"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from tokens import derive  # noqa: E402
@@ -117,6 +118,50 @@ def apply_dna(html: str, dna: dict, font_rel: str) -> str:
     html = html.replace("<style>", "<style>\n      " + faces_css(dna, font_rel), 1)
     if "googleapis.com" in html or "gstatic.com" in html:
         raise SystemExit("产出 deck 仍残留在线字体请求")
+    return html
+
+
+# ── Lucide 图标内联 ─────────────────────────────────────────────────────────
+# markup 只写 <i class="ico ico--item" data-icon="store"></i>；这里把 path 数据
+# 内联成 <svg>，产出仍是单文件离线。未知图标名直接报错，不静默留空。
+ICON_TAG_RE = re.compile(r'<i\b((?:(?!>).)*?\bdata-icon="([\w-]+)"(?:(?!>).)*?)>\s*</i>')
+_ICONS: dict | None = None
+
+
+def inline_icons(html: str) -> str:
+    global _ICONS
+    if 'data-icon="' not in html:
+        return html
+    if _ICONS is None:
+        _ICONS = json.loads(ICON_INDEX.read_text())
+
+    def rep(m: re.Match) -> str:
+        attrs, name = m.group(1), m.group(2)
+        if name not in _ICONS:
+            raise SystemExit(f"未知图标：{name}（用 scripts/find_icon.py 查名字）")
+        return (
+            f'<i{attrs}><svg viewBox="0 0 24 24" aria-hidden="true">'
+            f'{_ICONS[name]["svg"]}</svg></i>'
+        )
+
+    return ICON_TAG_RE.sub(rep, html)
+
+
+def inject_content(html: str, content: Path, title: str | None) -> str:
+    """把手写的 slides_content.html 换进 #deck。开头的 <style> 块并进 <head>。"""
+    body = content.read_text()
+    style = ""
+    if body.lstrip().startswith("<style>"):
+        i = body.index("</style>") + len("</style>")
+        style, body = body[:i], body[i:]
+    start = html.index('<div id="deck">') + len('<div id="deck">')
+    end = html.index("<!-- /deck -->")
+    end = html.rindex("</div>", start, end)
+    html = html[:start] + "\n" + body + "\n    " + html[end:]
+    if style:
+        html = html.replace("</head>", "    " + style + "\n  </head>", 1)
+    if title:
+        html = re.sub(r"<title>.*?</title>", f"<title>{title}</title>", html, count=1)
     return html
 
 
@@ -242,11 +287,21 @@ def ensure_fonts_copy(out: Path) -> Path:
     return dst_dir
 
 
-def build(slug: str, out: Path, font_rel: str = "assets/fonts") -> Path:
+def build(
+    slug: str,
+    out: Path,
+    font_rel: str = "assets/fonts",
+    content: Path | None = None,
+    title: str | None = None,
+) -> Path:
     dna = json.loads((DNAS / f"{slug}.json").read_text())
     html = CHASSIS.read_text()
     html = apply_dna(html, dna, font_rel)
-    html = fill_sample(html)
+    if content:
+        html = inject_content(html, content, title)
+    else:
+        html = fill_sample(html)
+    html = inline_icons(html)
     leftovers = audit_copy(html)
     if leftovers:
         print(f"  ! {slug}: placeholder copy still visible:")
@@ -263,6 +318,8 @@ def main():
     p.add_argument("--pair", help="colour pair id: " + ", ".join(PAIRS) + "; or a special: " + ", ".join(SPECIALS))
     p.add_argument("--mode", choices=["dark", "light"], help="dark paper or light paper (with --pair)")
     p.add_argument("--out", help="output html path")
+    p.add_argument("--content", help="手写的 slides_content.html，替换样张页（可带开头 <style> 块）")
+    p.add_argument("--title", help="与 --content 搭配：<title>")
     p.add_argument("--all", action="store_true", help="build all twelve sample seeds")
     p.add_argument("--list", action="store_true", help="print pairs -> slugs and exit")
     args = p.parse_args()
@@ -287,7 +344,8 @@ def main():
         return
     slug = resolve_slug(args.pair, args.mode, args.dna)
     out = Path(args.out) if args.out else ROOT / "skins" / slug / "seed.html"
-    print("wrote", build(slug, out))
+    content = Path(args.content) if args.content else None
+    print("wrote", build(slug, out, content=content, title=args.title))
     if args.out:
         print("vendor", ensure_vendor_copy(out.resolve()))
         print("fonts", ensure_fonts_copy(out.resolve()))
