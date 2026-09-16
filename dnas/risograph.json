@@ -1,0 +1,40 @@
+{
+  "slug": "risograph",
+  "kind": "dna",
+  "name": "双色印刷",
+  "title_suffix": "双色印刷",
+  "colors": {
+    "bg": "#f0ead6",
+    "fg": "#2a2a2a",
+    "accent": "#e8175a",
+    "ink2": "#0060b1",
+    "pin": [
+      "ink2"
+    ]
+  },
+  "fonts": {
+    "display": "\"Smiley Sans\", \"Noto Sans SC\", sans-serif",
+    "heading": "\"Smiley Sans\", \"Noto Sans SC\", sans-serif",
+    "body": "\"PingFang SC\", \"Noto Sans SC\", sans-serif",
+    "mono": "\"IBM Plex Mono\", \"PingFang SC\", monospace"
+  },
+  "faces": [
+    {
+      "family": "Smiley Sans",
+      "file": "SmileySans-Oblique.woff2",
+      "weight": "400"
+    },
+    {
+      "family": "Noto Sans SC",
+      "file": "NotoSansSC-VF.woff2",
+      "weight": "100 900"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "file": "IBMPlexMono-Medium.woff2",
+      "weight": "500"
+    }
+  ],
+  "extra_css": ".display, .h1, .h2, .h3, .stat-value, .flow-num, .cycle-num, .quote-mark { font-weight: 400; }",
+  "em": "color"
+}

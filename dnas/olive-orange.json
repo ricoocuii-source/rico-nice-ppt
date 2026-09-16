@@ -1,0 +1,41 @@
+{
+  "slug": "olive-orange",
+  "kind": "palette",
+  "name": "橄榄橙",
+  "title_suffix": "橄榄橙",
+  "colors": {
+    "bg": "#2b3321",
+    "fg": "#f7b06d",
+    "accent": "#f7b06d"
+  },
+  "fonts": {
+    "display": "\"Newsreader\", \"Noto Serif SC\", Georgia, serif",
+    "heading": "\"Newsreader\", \"Noto Serif SC\", Georgia, serif",
+    "body": "\"PingFang SC\", \"Noto Sans SC\", -apple-system, sans-serif",
+    "mono": "\"IBM Plex Mono\", \"PingFang SC\", monospace"
+  },
+  "faces": [
+    {
+      "family": "Newsreader",
+      "file": "Newsreader-VF.woff2",
+      "weight": "200 800"
+    },
+    {
+      "family": "Noto Serif SC",
+      "file": "NotoSerifSC-VF.woff2",
+      "weight": "200 900"
+    },
+    {
+      "family": "Noto Sans SC",
+      "file": "NotoSansSC-VF.woff2",
+      "weight": "100 900"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "file": "IBMPlexMono-Medium.woff2",
+      "weight": "500"
+    }
+  ],
+  "extra_css": "",
+  "em": "color"
+}

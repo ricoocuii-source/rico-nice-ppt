@@ -1,0 +1,41 @@
+{
+  "slug": "ink",
+  "kind": "palette",
+  "name": "墨",
+  "title_suffix": "墨",
+  "colors": {
+    "bg": "#181818",
+    "fg": "#fff9d8",
+    "accent": "#fff9d8"
+  },
+  "fonts": {
+    "display": "\"Newsreader\", \"Noto Serif SC\", Georgia, serif",
+    "heading": "\"Newsreader\", \"Noto Serif SC\", Georgia, serif",
+    "body": "\"PingFang SC\", \"Noto Sans SC\", -apple-system, sans-serif",
+    "mono": "\"IBM Plex Mono\", \"PingFang SC\", monospace"
+  },
+  "faces": [
+    {
+      "family": "Newsreader",
+      "file": "Newsreader-VF.woff2",
+      "weight": "200 800"
+    },
+    {
+      "family": "Noto Serif SC",
+      "file": "NotoSerifSC-VF.woff2",
+      "weight": "200 900"
+    },
+    {
+      "family": "Noto Sans SC",
+      "file": "NotoSansSC-VF.woff2",
+      "weight": "100 900"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "file": "IBMPlexMono-Medium.woff2",
+      "weight": "500"
+    }
+  ],
+  "extra_css": "",
+  "em": "color"
+}
