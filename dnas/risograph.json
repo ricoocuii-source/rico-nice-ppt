@@ -35,6 +35,6 @@
       "weight": "500"
     }
   ],
-  "extra_css": ".display, .h1, .h2, .h3, .stat-value, .flow-num, .cycle-num, .quote-mark { font-weight: 400; }",
+  "extra_css": ".display, .h1, .h2, .h3, .stat-value, .flow-num, .cycle-num, .quote-mark { font-weight: 400; }\n/* 得意黑字重偏粗：图标线宽跟着加一档，只此一套 */\n.ico--mark svg { stroke-width: 1; }\n.quad-num .ico--item svg { stroke-width: 2.25; }",
   "em": "color"
 }

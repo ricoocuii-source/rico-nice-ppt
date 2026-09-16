@@ -125,7 +125,9 @@ python3 scripts/check_contrast.py
 | 槽位 | 放哪 | 尺寸 / 线宽 | 颜色 |
 |---|---|---|---|
 | `ico--mark` 大图标 | cover / chapter / end 右侧，每页最多一个 | 20vw / 0.6 | 标题同色（fg），不是水印 |
-| `ico--item` 小图标 | 并列条目前：`bullet-list.has-ico` 每条、`quad-num` 内替代序号、`trip-frame-note` 行首、`compare-label` 行首 | 1.2vw（bullet 跟字号，栏头 / 小注 1.25em）/ 1.75 | 继承正文 / 副标题 / 小注的颜色 |
+| `ico--item` 小图标 | 并列条目前：`bullet-list.has-ico` 每条、`quad-num` 内替代序号、`trip-frame-note` 行首、`compare-label` 行首 | 1.2vw（bullet 跟字号，栏头 / 小注 1.25em，quadrant 卡片级 2.4vw）/ 1.75 | 继承正文 / 副标题 / 小注的颜色 |
+
+risograph 一套字重偏粗，图标线宽在它的 DNA `extra_css` 里加了一档（mark 1 / quadrant 2.25），其余 11 套不动。
 
 落点写法：cover 的大图标放进 `.cover-body` 第一个子元素（自动进右列，与「小标 + 标题 + 导语」块垂直居中）；chapter / end 放 section 直接子元素（页面居中，与文字块同一水平线）。bullet 用 `<ul class="bullet-list has-ico">`，每条 `<li><i class="ico ico--item" data-icon="…"></i>文字</li>`，破折号自动去掉。quadrant 是 `<span class="quad-num"><i class="ico ico--item" data-icon="…"></i></span>`，四格不是顺序，图标替代 01–04。
 

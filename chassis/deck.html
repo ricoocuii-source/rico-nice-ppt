@@ -938,7 +938,7 @@
         margin-top: 0.2em;
       }
       .quad-num .ico--item {
-        font-size: 1.6vw;
+        font-size: 2.4vw; /* 卡片级图形，独占一行，比条目图标大一档 */
         color: var(--c-fg);
       }
       .trip-frame-note,
@@ -3107,24 +3107,25 @@
           </div>
           <div class="quad-wrap" data-anim="fade-up" data-delay="1">
             <span class="quad-y">数据密度 <b>↑</b></span>
+            <!-- 四格不是顺序：小图标替代 01–04 序号 -->
             <div class="quad-grid">
               <div class="quad-card">
-                <span class="quad-num">01</span>
+                <span class="quad-num"><i class="ico ico--item" data-icon="chart-column"></i></span>
                 <span class="quad-title">图表族</span>
                 <p class="quad-desc">数字多、故事弱：竖柱、横条、折线、斜率、区间、饼图，先挑量纲再挑构图。</p>
               </div>
               <div class="quad-card">
-                <span class="quad-num">02</span>
+                <span class="quad-num"><i class="ico ico--item" data-icon="gavel"></i></span>
                 <span class="quad-title">判断族</span>
                 <p class="quad-desc">数字硬、话也重：stats 大数、versus 对决、scorecard 评分，一页一个结论，讲透为止。</p>
               </div>
               <div class="quad-card">
-                <span class="quad-num">03</span>
+                <span class="quad-num"><i class="ico ico--item" data-icon="book-open"></i></span>
                 <span class="quad-title">阅读族</span>
                 <p class="quad-desc">字多数字少：list、editorial、dense、split，密度靠真材料不靠抻间距。</p>
               </div>
               <div class="quad-card">
-                <span class="quad-num">04</span>
+                <span class="quad-num"><i class="ico ico--item" data-icon="quote"></i></span>
                 <span class="quad-title">叙事族</span>
                 <p class="quad-desc">话最重的页：cover、statement、quote、end，大字压场，一句顶一页。</p>
               </div>
